@@ -2,9 +2,9 @@ import streamlit as st
 from google import genai
 import os
 
-# =====================================================
-# PAGE CONFIG
-# =====================================================
+# --------------------------------------------------
+# PAGE CONFIGURATION
+# --------------------------------------------------
 
 st.set_page_config(
     page_title="StudyMate AI",
@@ -12,230 +12,118 @@ st.set_page_config(
     layout="wide"
 )
 
-# =====================================================
+# --------------------------------------------------
+# GEMINI API
+# --------------------------------------------------
+
+api_key = os.environ.get("GEMINI_API_KEY")
+
+if not api_key:
+    st.error("GEMINI_API_KEY is not configured.")
+    st.stop()
+
+client = genai.Client(api_key=api_key)
+
+# --------------------------------------------------
 # CUSTOM CSS
-# =====================================================
+# --------------------------------------------------
 
 st.markdown("""
 <style>
 
-/* ================= MAIN PAGE ================= */
-
-.main {
-    background-color: #0b1120;
-}
-
-.block-container {
-    padding-top: 2rem;
-    padding-left: 4rem;
-    padding-right: 4rem;
-}
-
-/* ================= MAIN TITLE ================= */
-
 .main-title {
-    color: #ffffff !important;
-    font-size: 44px;
+    font-size: 48px;
     font-weight: 800;
     margin-bottom: 5px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .subtitle {
-    color: #d1d5db !important;
-    font-size: 18px;
+    font-size: 20px;
     margin-bottom: 30px;
 }
 
-/* ================= TOP CARDS ================= */
+.card-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
 
-.card {
-    background: #ffffff;
+.study-card {
+    flex: 1;
+    padding: 25px;
     border-radius: 18px;
-    border: 1px solid #374151;
-    margin-bottom: 20px;
-    overflow: hidden;
+    border: 1px solid #444;
+    background-color: #1f2430;
+    min-height: 150px;
 }
 
 .card-title {
-    background: #172033;
-    color: #ffffff !important;
-    font-size: 22px;
-    font-weight: 800;
-    padding: 17px 20px;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
 }
 
 .card-content {
-    background: #ffffff;
-    color: #1f2937 !important;
-    font-size: 16px;
-    line-height: 1.5;
-    padding: 18px 20px;
-}
-
-/* ================= STUDY SECTION ================= */
-
-.study-header {
-    background: #172033;
-    color: #ffffff !important;
-    font-size: 24px;
-    font-weight: 800;
-    padding: 18px 22px;
-    border-radius: 18px 18px 0 0;
-    border: 1px solid #374151;
-}
-
-.study-container {
-    background: #ffffff;
-    padding: 22px;
-    border-radius: 0 0 18px 18px;
-    border: 1px solid #374151;
-    border-top: none;
-    margin-bottom: 25px;
-}
-
-/* ================= STREAMLIT LABELS ================= */
-
-label {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-}
-
-/* Input text */
-
-input {
-    color: #ffffff !important;
-}
-
-/* Text area */
-
-textarea {
-    color: #ffffff !important;
-}
-
-/* Placeholder */
-
-input::placeholder,
-textarea::placeholder {
-    color: #9ca3af !important;
-}
-
-/* ================= ANSWER ================= */
-
-.answer-header {
-    background: #172033;
-    color: #ffffff !important;
-    font-size: 24px;
-    font-weight: 800;
-    padding: 18px 22px;
-    border-radius: 18px 18px 0 0;
-    margin-top: 25px;
-    border: 1px solid #374151;
-}
-
-.answer-content {
-    background: #ffffff;
-    color: #1f2937 !important;
-    padding: 25px;
-    border-radius: 0 0 18px 18px;
-    border: 1px solid #374151;
-    border-top: none;
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.6;
 }
 
-/* ================= SIDEBAR ================= */
-
-[data-testid="stSidebar"] {
-    background-color: #111827;
-}
-
-[data-testid="stSidebar"] * {
-    color: #ffffff !important;
-}
-
-/* ================= BUTTON ================= */
-
-.stButton > button {
-    background-color: #172033;
-    color: #ffffff !important;
-    border: 1px solid #4b5563;
-    border-radius: 12px;
+.section-title {
+    font-size: 28px;
     font-weight: 700;
-    padding: 12px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #182238;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-.stButton > button:hover {
-    background-color: #26344d;
-    color: #ffffff !important;
-}
-
-/* ================= DIVIDER ================= */
-
-hr {
-    border-color: #374151 !important;
+.answer-box {
+    padding: 25px;
+    border-radius: 15px;
+    background-color: #1e2533;
+    border: 1px solid #444;
+    margin-top: 20px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-
-# =====================================================
-# GEMINI API
-# =====================================================
-
-api_key = os.environ["GEMINI_API_KEY"]
-
-client = genai.Client(
-    api_key=api_key
-)
-
-
-# =====================================================
+# --------------------------------------------------
 # SIDEBAR
-# =====================================================
+# --------------------------------------------------
 
 with st.sidebar:
 
-    st.markdown(
-        "## 🎓 StudyMate AI"
-    )
+    st.markdown("## 🎓 StudyMate AI")
 
-    st.write(
-        "Your personal AI learning assistant."
-    )
+    st.write("Your personal AI learning assistant.")
 
     st.divider()
 
-    st.markdown(
-        "### 📚 Study Options"
-    )
+    st.markdown("### 📚 Study Options")
 
-    mode = st.selectbox(
+    learning_mode = st.selectbox(
         "Learning Mode",
         [
             "Concept Explanation",
-            "Quick Answer",
-            "Detailed Explanation",
-            "Example Based Learning"
+            "Question & Answer",
+            "Improve Understanding"
         ]
     )
 
     st.divider()
 
-    st.markdown(
-        "### 💡 Study Tip"
-    )
+    st.markdown("### 💡 Study Tip")
 
     st.info(
-        "Ask clear questions and mention "
-        "the topic you are studying."
+        "Ask clear questions and mention the topic you are studying."
     )
 
-
-# =====================================================
+# --------------------------------------------------
 # MAIN TITLE
-# =====================================================
+# --------------------------------------------------
 
 st.markdown(
     '<div class="main-title">🎓 StudyMate AI</div>',
@@ -249,185 +137,175 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# =====================================================
-# TOP CARDS
-# =====================================================
-
-col1, col2, col3 = st.columns(3)
-
-
-with col1:
-
-    st.markdown("""
-    <div class="card">
-
-        <div class="card-title">
-            📖 Learn
-        </div>
-
-        <div class="card-content">
-            Understand difficult concepts easily
-            with simple explanations.
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-
-with col2:
-
-    st.markdown("""
-    <div class="card">
-
-        <div class="card-title">
-            💬 Ask
-        </div>
-
-        <div class="card-content">
-            Ask questions and get clear answers
-            from your AI assistant.
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-
-with col3:
-
-    st.markdown("""
-    <div class="card">
-
-        <div class="card-title">
-            🚀 Improve
-        </div>
-
-        <div class="card-content">
-            Learn with examples and improve
-            your understanding.
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
-
-
-# =====================================================
-# STUDY INPUT SECTION
-# =====================================================
+# --------------------------------------------------
+# THREE CARDS
+# --------------------------------------------------
 
 st.markdown("""
-<div class="study-header">
-    📚 What are you studying?
-</div>
+<div class="card-container">
 
-<div class="study-container">
+    <div class="study-card">
+        <div class="card-title">📖 Learn</div>
+        <div class="card-content">
+            Understand difficult concepts easily with simple explanations.
+        </div>
+    </div>
+
+    <div class="study-card">
+        <div class="card-title">💬 Ask</div>
+        <div class="card-content">
+            Ask questions and get clear answers from your AI assistant.
+        </div>
+    </div>
+
+    <div class="study-card">
+        <div class="card-title">🚀 Improve</div>
+        <div class="card-content">
+            Learn with examples and improve your understanding.
+        </div>
+    </div>
+
 </div>
 """, unsafe_allow_html=True)
 
+# --------------------------------------------------
+# STUDY SECTION
+# --------------------------------------------------
 
-# =====================================================
-# TOPIC INPUT
-# =====================================================
+st.markdown(
+    '<div class="section-title">📚 What are you studying?</div>',
+    unsafe_allow_html=True
+)
 
 topic = st.text_input(
     "Study Topic",
     placeholder="Example: Python, Machine Learning, Java..."
 )
 
-
-# =====================================================
-# QUESTION INPUT
-# =====================================================
-
 question = st.text_area(
     "Your Question",
-    placeholder="Example: What is supervised learning?",
-    height=140
+    placeholder="Example: What is supervised learning?"
 )
 
+# --------------------------------------------------
+# BUTTON
+# --------------------------------------------------
 
-# =====================================================
-# ASK BUTTON
-# =====================================================
-
-if st.button(
-    "🚀 Ask StudyMate",
-    use_container_width=True
-):
+if st.button("🤖 Get Answer", use_container_width=True):
 
     if not topic:
-
-        st.warning(
-            "⚠️ Please enter a study topic."
-        )
+        st.warning("Please enter a study topic.")
 
     elif not question:
-
-        st.warning(
-            "⚠️ Please enter your question."
-        )
+        st.warning("Please enter your question.")
 
     else:
 
-        # =============================================
+        # ------------------------------------------
         # PROMPT
-        # =============================================
+        # ------------------------------------------
 
-        prompt = f"""
-You are StudyMate AI, an intelligent educational assistant.
+        if learning_mode == "Concept Explanation":
 
-Study Topic:
+            prompt = f"""
+You are StudyMate AI, a friendly educational assistant.
+
+The student is studying:
 {topic}
 
-Learning Mode:
-{mode}
-
-Student Question:
+The student's question is:
 {question}
 
-Instructions:
+Explain the concept in a simple and easy-to-understand way.
 
-1. Explain the concept clearly.
-2. Use simple language.
-3. Give examples when useful.
-4. Use headings and bullet points.
-5. Explain step by step when necessary.
-6. Help the student understand the concept.
-7. Avoid unnecessarily complicated terminology.
+Follow this structure:
+
+1. Simple Definition
+2. Detailed Explanation
+3. Basic Example
+4. Real-world Application
+5. Key Points
+
+Use simple language suitable for a student.
 """
 
-        # =============================================
+        elif learning_mode == "Question & Answer":
+
+            prompt = f"""
+You are StudyMate AI.
+
+The student is studying:
+{topic}
+
+Student's question:
+{question}
+
+Give a clear and accurate answer.
+
+Use this structure:
+
+1. Direct Answer
+2. Explanation
+3. Example
+4. Important Points
+
+Keep the explanation easy to understand.
+"""
+
+        else:
+
+            prompt = f"""
+You are StudyMate AI.
+
+The student is studying:
+{topic}
+
+Student's question:
+{question}
+
+Help the student improve their understanding.
+
+Follow this structure:
+
+1. Explain the concept simply
+2. Give an example
+3. Explain a common mistake
+4. Give a real-world application
+5. Give a short practice question
+
+Use simple student-friendly language.
+"""
+
+        # ------------------------------------------
         # GENERATE ANSWER
-        # =============================================
+        # ------------------------------------------
 
-        with st.spinner(
-            "🧠 StudyMate is preparing your answer..."
-        ):
+        with st.spinner("🤖 StudyMate AI is thinking..."):
 
-            response = client.models.generate_content(
-                model="gemini-3.6-flash",
-                contents=prompt
-            )
+            try:
 
+                response = client.models.generate_content(
+                    model="gemini-3.6-flash",
+                    contents=prompt
+                )
 
-        # =============================================
-        # DISPLAY ANSWER
-        # =============================================
+                st.markdown(
+                    '<div class="answer-box">',
+                    unsafe_allow_html=True
+                )
 
-        st.markdown("""
-        <div class="answer-header">
-            🤖 StudyMate Answer
-        </div>
-        """, unsafe_allow_html=True)
+                st.subheader("🤖 StudyMate AI")
 
-        st.markdown(
-            '<div class="answer-content">',
-            unsafe_allow_html=True
-        )
+                st.markdown(response.text)
 
-        st.write(response.text)
+                st.markdown(
+                    '</div>',
+                    unsafe_allow_html=True
+                )
 
-        st.markdown(
-            '</div>',
-            unsafe_allow_html=True
-        )
+            except Exception as e:
+
+                st.error(
+                    "Unable to generate the answer. "
+                    "Please check your Gemini API key and try again."
+                )
