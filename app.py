@@ -15,6 +15,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* Main page */
 .main {
     background-color: #f5f7fb;
 }
@@ -29,42 +30,68 @@ st.markdown("""
 .main-title {
     font-size: 42px;
     font-weight: 700;
+    color: #111827;
     margin-bottom: 5px;
 }
 
 .subtitle {
     font-size: 18px;
-    color: #666;
+    color: #4b5563;
     margin-bottom: 30px;
 }
 
 /* Cards */
 .card {
-    background: white;
-    padding: 25px;
+    background: #ffffff;
+    padding: 0;
     border-radius: 18px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #d1d5db;
     margin-bottom: 20px;
+    overflow: hidden;
 }
 
 .card-title {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 10px;
+    background: #111827;
+    color: #ffffff;
+    font-size: 21px;
+    font-weight: 700;
+    padding: 15px 20px;
+    margin: 0;
+}
+
+.card-content {
+    color: #374151;
+    font-size: 16px;
+    padding: 18px 20px;
+    background: #ffffff;
 }
 
 /* Answer box */
 .answer-box {
-    background: white;
-    padding: 25px;
+    background: #ffffff;
+    padding: 0;
     border-radius: 18px;
-    border: 1px solid #ddd;
+    border: 1px solid #d1d5db;
     margin-top: 20px;
+    overflow: hidden;
 }
 
 .answer-title {
+    background: #111827;
+    color: #ffffff;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 700;
+    padding: 16px 20px;
+}
+
+/* Input section */
+.input-box {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid #d1d5db;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 /* Sidebar */
@@ -80,7 +107,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ---------------- API ----------------
+# ---------------- GEMINI API ----------------
 
 api_key = os.environ["GEMINI_API_KEY"]
 
@@ -113,7 +140,7 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("### 💡 Tip")
+    st.markdown("### 💡 Study Tip")
 
     st.info(
         "Ask clear questions and mention "
@@ -121,7 +148,7 @@ with st.sidebar:
     )
 
 
-# ---------------- MAIN PAGE ----------------
+# ---------------- MAIN HEADER ----------------
 
 st.markdown(
     '<div class="main-title">🎓 StudyMate AI</div>',
@@ -145,53 +172,57 @@ with col1:
     st.markdown("""
     <div class="card">
         <div class="card-title">📖 Learn</div>
-        Understand difficult concepts easily.
+        <div class="card-content">
+            Understand difficult concepts easily with simple explanations.
+        </div>
     </div>
     """, unsafe_allow_html=True)
+
 
 with col2:
 
     st.markdown("""
     <div class="card">
         <div class="card-title">💬 Ask</div>
-        Ask questions and get instant answers.
+        <div class="card-content">
+            Ask questions and get clear answers from your AI assistant.
+        </div>
     </div>
     """, unsafe_allow_html=True)
+
 
 with col3:
 
     st.markdown("""
     <div class="card">
         <div class="card-title">🚀 Improve</div>
-        Learn with examples and explanations.
+        <div class="card-content">
+            Learn with examples and improve your understanding.
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
 
 # ---------------- INPUT SECTION ----------------
 
-st.markdown(
-    '<div class="card">',
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div class="input-box">
+    <h3>📚 What are you studying?</h3>
+</div>
+""", unsafe_allow_html=True)
 
-st.markdown(
-    '<div class="card-title">📚 What are you studying?</div>',
-    unsafe_allow_html=True
-)
 
 topic = st.text_input(
-    "Topic",
+    "Study Topic",
     placeholder="Example: Python, Machine Learning, Java..."
 )
+
 
 question = st.text_area(
     "Your Question",
     placeholder="Example: What is supervised learning?",
     height=130
 )
-
-st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ---------------- ASK BUTTON ----------------
@@ -203,11 +234,15 @@ if st.button(
 
     if not topic:
 
-        st.warning("⚠️ Please enter a study topic.")
+        st.warning(
+            "⚠️ Please enter a study topic."
+        )
 
     elif not question:
 
-        st.warning("⚠️ Please enter your question.")
+        st.warning(
+            "⚠️ Please enter your question."
+        )
 
     else:
 
@@ -224,35 +259,37 @@ Student Question:
 {question}
 
 Instructions:
-- Explain clearly.
+
+- Explain the concept clearly.
 - Use simple language.
 - Give examples when useful.
-- Organize the answer using headings or bullet points.
-- Help the student understand the concept rather than just giving
-  a short answer.
+- Organize the answer using headings.
+- Use bullet points where appropriate.
+- Explain step by step when necessary.
+- Help the student understand the concept.
+- Avoid unnecessarily complicated terminology.
 """
 
-        with st.spinner("🧠 StudyMate is preparing your answer..."):
+        with st.spinner(
+            "🧠 StudyMate is preparing your answer..."
+        ):
 
             response = client.models.generate_content(
                 model="gemini-3.6-flash",
                 contents=prompt
             )
 
+
         # ---------------- ANSWER ----------------
 
-        st.markdown(
-            '<div class="answer-box">',
-            unsafe_allow_html=True
-        )
-
-        st.markdown(
-            '<div class="answer-title">🤖 StudyMate Answer</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="answer-box">
+            <div class="answer-title">
+                🤖 StudyMate Answer
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("---")
 
         st.write(response.text)
-
-        st.markdown("</div>", unsafe_allow_html=True)
