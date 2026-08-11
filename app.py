@@ -2,7 +2,9 @@ import streamlit as st
 from google import genai
 import os
 
-# ---------------- PAGE CONFIG ----------------
+# =====================================================
+# PAGE CONFIG
+# =====================================================
 
 st.set_page_config(
     page_title="StudyMate AI",
@@ -10,14 +12,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------- CUSTOM CSS ----------------
+# =====================================================
+# CUSTOM CSS
+# =====================================================
 
 st.markdown("""
 <style>
 
-/* Main page */
+/* ================= MAIN PAGE ================= */
+
 .main {
-    background-color: #f5f7fb;
+    background-color: #0b1120;
 }
 
 .block-container {
@@ -26,88 +31,158 @@ st.markdown("""
     padding-right: 4rem;
 }
 
-/* Main title */
+/* ================= MAIN TITLE ================= */
+
 .main-title {
-    font-size: 42px;
-    font-weight: 700;
-    color: #111827;
+    color: #ffffff !important;
+    font-size: 44px;
+    font-weight: 800;
     margin-bottom: 5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .subtitle {
+    color: #d1d5db !important;
     font-size: 18px;
-    color: #4b5563;
     margin-bottom: 30px;
 }
 
-/* Cards */
+/* ================= TOP CARDS ================= */
+
 .card {
     background: #ffffff;
-    padding: 0;
     border-radius: 18px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #374151;
     margin-bottom: 20px;
     overflow: hidden;
 }
 
 .card-title {
-    background: #111827;
-    color: #ffffff;
-    font-size: 21px;
-    font-weight: 700;
-    padding: 15px 20px;
-    margin: 0;
+    background: #172033;
+    color: #ffffff !important;
+    font-size: 22px;
+    font-weight: 800;
+    padding: 17px 20px;
 }
 
 .card-content {
-    color: #374151;
+    background: #ffffff;
+    color: #1f2937 !important;
     font-size: 16px;
+    line-height: 1.5;
     padding: 18px 20px;
-    background: #ffffff;
 }
 
-/* Answer box */
-.answer-box {
-    background: #ffffff;
-    padding: 0;
-    border-radius: 18px;
-    border: 1px solid #d1d5db;
-    margin-top: 20px;
-    overflow: hidden;
+/* ================= STUDY SECTION ================= */
+
+.study-header {
+    background: #172033;
+    color: #ffffff !important;
+    font-size: 24px;
+    font-weight: 800;
+    padding: 18px 22px;
+    border-radius: 18px 18px 0 0;
+    border: 1px solid #374151;
 }
 
-.answer-title {
-    background: #111827;
-    color: #ffffff;
-    font-size: 22px;
-    font-weight: 700;
-    padding: 16px 20px;
+.study-container {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 0 0 18px 18px;
+    border: 1px solid #374151;
+    border-top: none;
+    margin-bottom: 25px;
 }
 
-/* Input section */
-.input-box {
+/* ================= STREAMLIT LABELS ================= */
+
+label {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Input text */
+
+input {
+    color: #ffffff !important;
+}
+
+/* Text area */
+
+textarea {
+    color: #ffffff !important;
+}
+
+/* Placeholder */
+
+input::placeholder,
+textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* ================= ANSWER ================= */
+
+.answer-header {
+    background: #172033;
+    color: #ffffff !important;
+    font-size: 24px;
+    font-weight: 800;
+    padding: 18px 22px;
+    border-radius: 18px 18px 0 0;
+    margin-top: 25px;
+    border: 1px solid #374151;
+}
+
+.answer-content {
     background: #ffffff;
+    color: #1f2937 !important;
     padding: 25px;
-    border-radius: 18px;
-    border: 1px solid #d1d5db;
-    margin-top: 10px;
-    margin-bottom: 20px;
+    border-radius: 0 0 18px 18px;
+    border: 1px solid #374151;
+    border-top: none;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
-/* Sidebar */
+/* ================= SIDEBAR ================= */
+
 [data-testid="stSidebar"] {
     background-color: #111827;
 }
 
 [data-testid="stSidebar"] * {
-    color: white;
+    color: #ffffff !important;
+}
+
+/* ================= BUTTON ================= */
+
+.stButton > button {
+    background-color: #172033;
+    color: #ffffff !important;
+    border: 1px solid #4b5563;
+    border-radius: 12px;
+    font-weight: 700;
+    padding: 12px;
+}
+
+.stButton > button:hover {
+    background-color: #26344d;
+    color: #ffffff !important;
+}
+
+/* ================= DIVIDER ================= */
+
+hr {
+    border-color: #374151 !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# ---------------- GEMINI API ----------------
+# =====================================================
+# GEMINI API
+# =====================================================
 
 api_key = os.environ["GEMINI_API_KEY"]
 
@@ -116,17 +191,25 @@ client = genai.Client(
 )
 
 
-# ---------------- SIDEBAR ----------------
+# =====================================================
+# SIDEBAR
+# =====================================================
 
 with st.sidebar:
 
-    st.markdown("## 🎓 StudyMate AI")
+    st.markdown(
+        "## 🎓 StudyMate AI"
+    )
 
-    st.write("Your personal AI learning assistant.")
+    st.write(
+        "Your personal AI learning assistant."
+    )
 
     st.divider()
 
-    st.markdown("### 📚 Study Options")
+    st.markdown(
+        "### 📚 Study Options"
+    )
 
     mode = st.selectbox(
         "Learning Mode",
@@ -140,7 +223,9 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("### 💡 Study Tip")
+    st.markdown(
+        "### 💡 Study Tip"
+    )
 
     st.info(
         "Ask clear questions and mention "
@@ -148,7 +233,9 @@ with st.sidebar:
     )
 
 
-# ---------------- MAIN HEADER ----------------
+# =====================================================
+# MAIN TITLE
+# =====================================================
 
 st.markdown(
     '<div class="main-title">🎓 StudyMate AI</div>',
@@ -163,18 +250,27 @@ st.markdown(
 )
 
 
-# ---------------- TOP CARDS ----------------
+# =====================================================
+# TOP CARDS
+# =====================================================
 
 col1, col2, col3 = st.columns(3)
+
 
 with col1:
 
     st.markdown("""
     <div class="card">
-        <div class="card-title">📖 Learn</div>
-        <div class="card-content">
-            Understand difficult concepts easily with simple explanations.
+
+        <div class="card-title">
+            📖 Learn
         </div>
+
+        <div class="card-content">
+            Understand difficult concepts easily
+            with simple explanations.
+        </div>
+
     </div>
     """, unsafe_allow_html=True)
 
@@ -183,10 +279,16 @@ with col2:
 
     st.markdown("""
     <div class="card">
-        <div class="card-title">💬 Ask</div>
-        <div class="card-content">
-            Ask questions and get clear answers from your AI assistant.
+
+        <div class="card-title">
+            💬 Ask
         </div>
+
+        <div class="card-content">
+            Ask questions and get clear answers
+            from your AI assistant.
+        </div>
+
     </div>
     """, unsafe_allow_html=True)
 
@@ -195,22 +297,37 @@ with col3:
 
     st.markdown("""
     <div class="card">
-        <div class="card-title">🚀 Improve</div>
-        <div class="card-content">
-            Learn with examples and improve your understanding.
+
+        <div class="card-title">
+            🚀 Improve
         </div>
+
+        <div class="card-content">
+            Learn with examples and improve
+            your understanding.
+        </div>
+
     </div>
     """, unsafe_allow_html=True)
 
 
-# ---------------- INPUT SECTION ----------------
+# =====================================================
+# STUDY INPUT SECTION
+# =====================================================
 
 st.markdown("""
-<div class="input-box">
-    <h3>📚 What are you studying?</h3>
+<div class="study-header">
+    📚 What are you studying?
+</div>
+
+<div class="study-container">
 </div>
 """, unsafe_allow_html=True)
 
+
+# =====================================================
+# TOPIC INPUT
+# =====================================================
 
 topic = st.text_input(
     "Study Topic",
@@ -218,14 +335,20 @@ topic = st.text_input(
 )
 
 
+# =====================================================
+# QUESTION INPUT
+# =====================================================
+
 question = st.text_area(
     "Your Question",
     placeholder="Example: What is supervised learning?",
-    height=130
+    height=140
 )
 
 
-# ---------------- ASK BUTTON ----------------
+# =====================================================
+# ASK BUTTON
+# =====================================================
 
 if st.button(
     "🚀 Ask StudyMate",
@@ -246,6 +369,10 @@ if st.button(
 
     else:
 
+        # =============================================
+        # PROMPT
+        # =============================================
+
         prompt = f"""
 You are StudyMate AI, an intelligent educational assistant.
 
@@ -260,15 +387,18 @@ Student Question:
 
 Instructions:
 
-- Explain the concept clearly.
-- Use simple language.
-- Give examples when useful.
-- Organize the answer using headings.
-- Use bullet points where appropriate.
-- Explain step by step when necessary.
-- Help the student understand the concept.
-- Avoid unnecessarily complicated terminology.
+1. Explain the concept clearly.
+2. Use simple language.
+3. Give examples when useful.
+4. Use headings and bullet points.
+5. Explain step by step when necessary.
+6. Help the student understand the concept.
+7. Avoid unnecessarily complicated terminology.
 """
+
+        # =============================================
+        # GENERATE ANSWER
+        # =============================================
 
         with st.spinner(
             "🧠 StudyMate is preparing your answer..."
@@ -280,16 +410,24 @@ Instructions:
             )
 
 
-        # ---------------- ANSWER ----------------
+        # =============================================
+        # DISPLAY ANSWER
+        # =============================================
 
         st.markdown("""
-        <div class="answer-box">
-            <div class="answer-title">
-                🤖 StudyMate Answer
-            </div>
+        <div class="answer-header">
+            🤖 StudyMate Answer
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("---")
+        st.markdown(
+            '<div class="answer-content">',
+            unsafe_allow_html=True
+        )
 
         st.write(response.text)
+
+        st.markdown(
+            '</div>',
+            unsafe_allow_html=True
+        )
